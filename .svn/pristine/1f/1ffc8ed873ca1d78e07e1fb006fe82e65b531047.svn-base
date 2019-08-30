@@ -1,0 +1,13 @@
+.lotus-nav{
+    margin-bottom: 20px;
+    padding: 5px;
+    line-height: 25px;
+    border-radius: 0 2px 2px 0;
+    background-color: #f2f2f2;
+}
+.lotus-input{
+    height: 30px;
+ }
+ .x-right{
+ 	line-height:30px;
+ }

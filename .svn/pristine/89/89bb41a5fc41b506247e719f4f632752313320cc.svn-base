@@ -1,0 +1,42 @@
+<?php
+
+namespace app\index\controller;
+
+use app\model\Order;
+use think\Controller;
+use think\Db;
+
+class Task extends Main
+{
+    public function index()
+    {
+        if ($this->request->isAjax()) {
+            $savepath = input('savepath') ? input('savepath') : '';
+            if (!$savepath) {
+                return $this->apiReturn(1, [], '任务创建失败，请稍后重试');
+            }
+            //插入订单表
+            $orderModel = new Order();
+            while (true) {
+                $orderno = date('YmdHis') . randomkeys(10, true);
+                if (!$orderModel->getCount(['orderno' => $orderno])) {
+                    break;
+                }
+            }
+            $data = [
+                'userid'   => 1,
+                'orderno'  => $orderno,
+                'filename' => $savepath,
+                'addtime'  => date('Y-m-d H:i:s')
+            ];
+            $res = $orderModel->insert($data);
+            if ($res) {
+                return $this->apiReturn(0, [], '任务创建成功');
+            } else {
+                return $this->apiReturn(2, [], '任务创建失败，请稍后重试');
+            }
+        }
+
+        return $this->fetch();
+    }
+}

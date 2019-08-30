@@ -1,0 +1,86 @@
+<?php
+
+namespace app\index\controller;
+
+use app\model\Mobilestore;
+use app\model\Order;
+use app\model\Usermobile;
+use think\Controller;
+use think\Db;
+
+
+class Crontab extends Controller
+{
+    public function index()
+    {
+        set_time_limit(0);
+        $orderModel       = new Order();
+        $usermobileModel  = new Usermobile();
+        $mobilestoreModel = new Mobilestore();
+
+        $orderList = $orderModel->getListAll(['isrun' => 0]);
+        if (!$orderList) {
+            exit;
+        }
+        foreach ($orderList as $v) {
+            //查找文件
+            $filepath = ROOT_PATH . 'public' . DS . 'uploads' . DS . $v['filename'];
+            if (!file_exists($filepath)) {
+                $orderModel->updateById($v['id'], ['status' => 2, 'updatetime' => date('Y-m-d H:i:s')]);
+            }
+
+            $fp       = fopen($filepath, 'r');
+            $str      = '';
+            $phoneArr = [];
+            //按行读取
+            while (!feof($fp)) {
+                $str        = fgets($fp);
+                $str        = str_replace(PHP_EOL, '', $str);
+                $phoneArr[] = $str;
+            }
+            Db::startTrans();
+            try {
+                //插入订单表
+                $orderno          = $v['orderno'];
+
+                //去重
+                //$phoneArr  = array_unique($phoneArr);
+                $count     = count($phoneArr);
+                $limit     = 1000;
+                $times     = ceil($count / $limit);
+                for ($i = 0; $i < $times; $i++) {
+                    $offset = ($i - 1) * $limit;
+                    $tmpArr = array_slice($phoneArr, $offset, $limit);
+                    //插入手机号表(判断是否已存在)
+                    $hasMobile = $mobilestoreModel->getListAll(['mobile' => ['in', $tmpArr]], 'mobile');
+                    $hasMobile = array_column($hasMobile, 'mobile');
+                    $phoneinfo = [];
+                    foreach ($tmpArr as $p) {
+                        if (in_array($p, $hasMobile)) {
+                            $phoneinfo[] = [
+                                'orderno' => $orderno,
+                                'userid'  => 1,
+                                'mobile'  => $p,
+                                'status'  => 2 //已开通
+                            ];
+                        } else {
+                            $phoneinfo[] = [
+                                'orderno' => $orderno,
+                                'userid'  => 1,
+                                'mobile'  => $p,
+                                'status'  => 0
+                            ];
+                        }
+                    }
+                    $usermobileModel->insertAll($phoneinfo);
+                }
+                save_log('uploadcrontab', 'orderid:'.$v['orderno']);
+                Db::commit();
+            } catch (\Exception $e) {
+                save_log('uploadcrontab', $e->getMessage());
+                Db::rollback();
+            }
+
+        }
+    }
+}

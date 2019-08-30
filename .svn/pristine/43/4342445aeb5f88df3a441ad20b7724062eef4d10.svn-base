@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link href="__static__/cssio/global.css" rel="stylesheet">
+    <link href="__static__/cssio/login.css" rel="stylesheet">
+    <script src="__static__/jsio/jquery.min.js"></script>
+    <link href="__static__/cssio/toastr.min.css" rel="stylesheet">
+    <script src="__static__/jsio/toastr.min.js"></script>
+    <script src="__module__/layer/layer.js"></script>
+
+</head>
+<body>
+<div class="content of-login">
+    <div class="login-main">
+        <img alt="" class="right-msg" src="__static__/picture/login-banner.png">
+        <form id="login" method="post">
+            <div class="login-box">
+                <img alt="" class="right-light" src="__static__/picture/login-light.png">
+                <div class="of-header">用户登录</div>
+                <input type="hidden" name="__token__" value="d26c59516978568f4a83df47cb2c94f7" />                <div class="flex-center-wrap flex-justify-between of-input ">
+                    <img alt="" src="__static__/picture/login-user.png">
+                    <input name="mobile"  id="mobile" placeholder="请输入手机号" type="text">
+                </div>
+
+                <div class="flex-center-wrap flex-justify-between of-input ">
+                    <img alt="" src="__static__/picture/login-pass.png">
+                    <input name="password"  id="password" placeholder="请输入密码" type="password">
+                </div>
+                <div class="of-forget">忘记密码</div>
+                <div class="of-pass-btn" onclick="login()">登 录</div>
+                <div class="of-without">没有注册？<a href="{:url('Index/reg')}">注册</a></div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="__static__/jsio/user.js"></script>
+</body>
+<script >
+    function login(){
+//        var username  = $('#username').val();
+        var password  = $('#password').val();
+        var mobile  = $('#mobile').val();
+
+
+//        var code_  = $('#J_codetext').val();
+
+//        var remember = [];
+//        $('input[name="remember"]:checked').each(function(){
+//            remember.push($(this).val());
+//        });
+//        var sr = 0;
+//        if (remember[0] === 'on') {
+//            sr = 1;
+//        }
+//        console.log(sr);
+        if ( password=='') {
+            layer.msg('密码不能为空', {offset:'t'}  );
+            return;
+        }
+        if (mobile == '') {
+            layer.msg('账号不能为空', {offset:'t'}  );
+            return;
+        }
+//        if(code_==''||code_==null){
+//            layer.msg('验证码不能为空', {offset:'t'}  );
+//            return;
+//        }
+//        var vali = validate();
+//        if (!vali) {
+//            layer.msg('验证码错误，请重新输入',{});
+//            createCode();
+//            return false;
+//        }
+
+
+        $.ajax({
+            type:'post',
+//            url:'login',
+            url: "{:url('login')}",
+            data:{
+//                username: username,
+                password:password,
+                mobile:mobile,
+//                remember:sr
+            },
+            dataType:'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    layer.msg('登录成功',{icon:1,time:1000}, function () {
+                        window.location.href="{:url('admin/index/index')}";
+                    });
+                } else if (res.code === 1) {
+                    window.location.href="{:url('admin/index/index')}";
+                } else if (res.code === 2) {
+                    window.location.href="{:url('admin/index/index')}";
+                }else if (res.code === 3) {
+                    layer.msg(res.msg,{icon:2,time:1000}, function () {
+
+                    });
+
+                }
+            }
+        });
+    }
+</script>
+</html>

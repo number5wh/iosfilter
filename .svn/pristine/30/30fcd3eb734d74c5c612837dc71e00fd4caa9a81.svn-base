@@ -1,0 +1,179 @@
+{extend name="common/base" /}
+
+{block name="title"}任务过滤进度{/block}
+{block name="css"}{/block}
+{block name="content"}
+
+<div class="layui-col-md3">
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+            <div class="layadmin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%; height: auto;">
+
+                <ul class="layui-row layui-col-space10 layui-this">
+
+                    <li class="layui-col-xs6">
+                       <img src="__static__/images/touxiang.jpg" width="100" height="100" style="border-radius:50%;margin-left: 60px;">
+                    </li>
+                    <li class="layui-col-xs6" style="margin-bottom: 30px;">
+                        <a href="javascript:;" style="display: inline-block;margin-top: 10px;">
+
+                            <h3 style="font-weight: 900">当前账号：mt8899</h3>
+                            <h5>剩余积分：mt8899</h5>
+                            <h5>剩余检测积分：mt8899</h5>
+
+                        </a>
+                    </li>
+                    <HR align=center  color=#987cb9 SIZE=0.01 style="padding: 1px;">
+                    <li class="layui-col-xs12">
+                        <a href="javascript:;" >
+                            <h5 style="color: red;margin-left: 60px;">如需充值，请联系您的客服专员充值</h5>
+
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{/block}
+{block name="script"}
+<script type="text/html" id="msg-bar">
+    {{#  if(d.ispay==0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="pay">支付订单</a>
+    {{#  } }}
+</script>
+<script>
+    layui.config({
+        base: '__layui__/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+
+    }).use(['index', 'table', 'layer', 'element', 'laydate', 'form', 'jquery'], function() {
+        var element = layui.element
+            ,layer = layui.layer
+            ,laydate = layui.laydate
+            ,table = layui.table
+            ,$ = layui.$
+            ,form = layui.form;
+
+        var main = {
+            //渲染数据
+            renderData : function() {
+                var cols = [ //表头
+                    {field: 'taskname', title: '任务名称', minWidth:120}
+                    ,{field: 'orderno', title: '订单号', minWidth:220}
+                    ,{field: 'addtime', title: '上传时间', minWidth:180}
+                    , {field: 'completetime', title: '完成时间', minWidth:180}
+                    , {field: 'status', title: '检测进度', minWidth:120, templet:function(d) {
+                        if (d.status == 0) {
+                            return '未处理';
+                        } else if (d.status ==1) {
+                            return '已处理'
+                        } else if (d.status ==2) {
+                            return '上传文件有误'
+                        } else if (d.status ==3) {
+                            return '处理中'
+                        } else {
+                            return '未处理';
+                        }
+                    }}
+                    , {field: 'num', title: '总数量', minWidth:120}
+                    , {field: 'checked', title: '已检测数量', minWidth:120}
+                    , {field: 'opennum', title: '开通数量', minWidth:120}
+                    , {field: 'ordermoney', title: '订单金额', minWidth:120}
+                    , {field: 'ispay', title: '支付状态', minWidth:120, templet:function(d) {
+                        if (d.ispay == 1) {
+                            return '<span style="color: red">已支付</span>'
+                        } else {
+                            return '<span style="color: green">未支付</span>'
+                        }
+                    }}
+//                , {field: 'proxyincome', title: '账户余额', minWidth:150}
+                    , {fixed: 'right', title:'操作', align:'center', minWidth:100, toolbar: '#msg-bar'}
+                ];
+                table.render({
+                    elem: '#proxylist'
+                    , url: "{:url('task/getlist')}" //数据接口
+                    , page: true //开启分页
+                    , limit:15
+                    , cols: [cols]
+//                    , done : function(res) {
+//                        $('#totalin').html(res.other[0]);
+//                        $('#totalout').html(res.other[1]);
+//                    }
+                });
+            },
+
+            //搜索
+            search : function() {
+                var roleid = $.trim($('#roleid').val());
+                if (isNaN(roleid)) {
+                    layer.msg('请输入正确的ID', {icon: 5});
+                    return false;
+                }
+                //执行重载
+                table.reload('proxylist', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        'roleid':roleid
+                    }
+                });
+            },
+
+            //操作事件
+            extraEvent : function () {
+                //编辑
+                table.on('tool(proxylist)', function(obj) {
+                    var data = obj.data //获得当前行数据
+                        ,layEvent = obj.event; //获得 lay-event 对应的值
+                    tr = obj.tr; //获得当前行 tr 的DOM对象
+                    if (layEvent === 'pay') {
+                        layer.confirm("支付该笔订单？",{btn: ['确认','取消']}, function() {
+                            $.ajax({
+                                type:'post',
+                                url:"{:url('task/pay')}",
+                                data:{
+                                    'orderno' : data.orderno
+                                },
+                                dataType:'json',
+                                success: function(res) {
+                                    if (res.code === 0) {
+                                        layer.msg(res.msg,{icon:1,time:1000}, function () {
+                                           window.location.reload();
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {icon:2});
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            },
+
+            //绑定事件
+            bindEvent : function () {
+                $('#search').on('click', function(e) {
+                    e.preventDefault();
+                    main.search();
+                });
+            },
+
+            //初始化
+            init : function() {
+                this.renderData();
+                this.extraEvent();
+                this.bindEvent();
+            }
+        };
+
+        main.init();
+    });
+</script>
+{/block}

@@ -1,0 +1,101 @@
+<?php
+namespace app\index\controller;
+
+use app\model\Mobilestore;
+use app\model\Order;
+use app\model\Usermobile;
+use think\Db;
+
+class Upload extends Main
+{
+    public function mobile()
+    {
+
+        $file = $this->request->file('file');
+        $info = $file->validate(['size'=>10485760,'ext'=>'txt'])->move(ROOT_PATH . 'public' . DS . 'uploads');
+        if ($info) {
+            $savepath = $info->getSaveName();
+            //验证文件手机号是否正确
+            $filepath = ROOT_PATH . 'public' . DS . 'uploads'.DS.$savepath;
+            if (!file_exists($filepath)) {
+                return $this->apiReturn(2, [], '上传失败');
+            }
+
+            $fp = fopen($filepath, 'r');
+            $str = '';
+            $phoneArr = [];
+            //按行读取
+            while(!feof($fp)) {
+                $str = fgets($fp);
+                $str = str_replace(PHP_EOL, '', $str);
+                if (!ismobile($str)) {
+                    return $this->apiReturn(3, [], '上传的文件存在手机号格式有误的信息');
+                }
+                $phoneArr[] = $str;
+            }
+
+            Db::startTrans();
+            try {
+                //插入订单表
+                $orderModel = new Order();
+                $usermobileModel = new Usermobile();
+                $mobilestoreModel  = new Mobilestore();
+                while (true) {
+                    $orderno = date('YmdHis').randomkeys(10, true);
+                    if (!$orderModel->getCount(['orderno' => $orderno])) {
+                        break;
+                    }
+                }
+                $data = [
+                    'userid' => 1,
+                    'orderno' => $orderno,
+                    'filename' => $savepath,
+                    'addtime'  => date('Y-m-d H:i:s')
+                ];
+                $orderModel->insert($data);
+
+                //插入手机号表(判断是否已存在)
+                $hasMobile = $mobilestoreModel->getListAll(['mobile' => ['in',$phoneArr]], 'mobile');
+                $hasMobile = array_column($hasMobile, 'mobile');
+                $phoneinfo = [];
+                foreach ($phoneArr as $p) {
+                    if (in_array($p, $hasMobile)) {
+                        $phoneinfo[] = [
+                            'orderno' => $orderno,
+                            'userid' => 1,
+                            'mobile' => $p,
+                            'status' => 3
+                        ];
+                    } else {
+                        $phoneinfo[] = [
+                            'orderno' => $orderno,
+                            'userid' => 1,
+                            'mobile' => $p,
+                            'status' => 0
+                        ];
+                    }
+                }
+
+                //批量处理，每次500
+                $count = count($phoneinfo);
+                $limit = 500;
+                $times = ceil($count / $limit);
+                for ($i=0; $i<$times; $i++) {
+                    $offset=($i-1)*$limit;
+                    $data=array_slice($phoneinfo,$offset,$limit);
+                    $usermobileModel->insertAll($data);
+                }
+                Db::commit();
+                return $this->apiReturn(0, ['path' => $savepath], '上传成功，请点击创建任务进行检验');
+            } catch (\Exception $e) {
+                save_log('upload', $e->getMessage());
+                Db::rollback();
+                return $this->apiReturn(3, [], '上传失败，请稍后重试');
+            }
+
+        } else {
+            return $this->apiReturn(1, [], $file->getError());
+        }
+
+    }
+}

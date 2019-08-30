@@ -1,0 +1,49 @@
+2019-08-29 16:53:13 pid:1 exception 'think\exception\PDOException' with message 'SQLSTATE[HY000]: General error: 1364 Field 'id' doesn't have a default value' in C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Connection.php:453
+Stack trace:
+#0 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Query.php(269): think\db\Connection->execute('INSERT INTO `te...', Array, Object(think\db\Query))
+#1 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Query.php(2275): think\db\Query->execute('INSERT INTO `te...', Array, Object(think\db\Query))
+#2 C:\Users\Administrator\Desktop\iosfilter\application\client\controller\Client.php(25): think\db\Query->insert(Array)
+#3 [internal function]: app\client\controller\Client->app\client\controller\{closure}(Object(Workerman\Connection\AsyncTcpConnection), '{"code":0,"data...')
+#4 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Connection\TcpConnection.php(650): call_user_func(Object(Closure), Object(Workerman\Connection\AsyncTcpConnection), '{"code":0,"data...')
+#5 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #49)
+#6 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Events\Select.php(289): call_user_func_array(Array, Array)
+#7 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(2235): Workerman\Events\Select->loop()
+#8 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(1225): Workerman\Worker->run()
+#9 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(1168): Workerman\Worker::forkWorkersForWindows()
+#10 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(478): Workerman\Worker::forkWorkers()
+#11 C:\Users\Administrator\Desktop\iosfilter\application\client\controller\Client.php(31): Workerman\Worker::runAll()
+#12 [internal function]: app\client\controller\Client->__construct()
+#13 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(359): ReflectionClass->newInstanceArgs(Array)
+#14 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\Loader.php(479): think\App::invokeClass('app\\client\\cont...')
+#15 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(581): think\Loader::controller('client', 'controller', false, 'Error')
+#16 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(457): think\App::module(Array, Array, NULL)
+#17 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(139): think\App::exec(Array, Array)
+#18 C:\Users\Administrator\Desktop\iosfilter\thinkphp\start.php(19): think\App::run()
+#19 C:\Users\Administrator\Desktop\iosfilter\client.php(27): require('C:\\Users\\Admini...')
+#20 {main}
+2019-08-29 16:53:13 pid:1 Worker process terminated
+2019-08-30 10:05:22 pid:1 exception 'think\exception\PDOException' with message 'SQLSTATE[HY000]: General error: 1364 Field 'id' doesn't have a default value' in C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Connection.php:453
+Stack trace:
+#0 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Query.php(269): think\db\Connection->execute('INSERT INTO `te...', Array, Object(think\db\Query))
+#1 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\db\Query.php(2275): think\db\Query->execute('INSERT INTO `te...', Array, Object(think\db\Query))
+#2 C:\Users\Administrator\Desktop\iosfilter\application\client\controller\Client.php(25): think\db\Query->insert(Array)
+#3 [internal function]: app\client\controller\Client->app\client\controller\{closure}(Object(Workerman\Connection\AsyncTcpConnection), '{"code":0,"data...')
+#4 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Connection\TcpConnection.php(650): call_user_func(Object(Closure), Object(Workerman\Connection\AsyncTcpConnection), '{"code":0,"data...')
+#5 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #49)
+#6 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Events\Select.php(289): call_user_func_array(Array, Array)
+#7 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(2235): Workerman\Events\Select->loop()
+#8 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(1225): Workerman\Worker->run()
+#9 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(1168): Workerman\Worker::forkWorkersForWindows()
+#10 C:\Users\Administrator\Desktop\iosfilter\vendor\workerman\workerman\Worker.php(478): Workerman\Worker::forkWorkers()
+#11 C:\Users\Administrator\Desktop\iosfilter\application\client\controller\Client.php(31): Workerman\Worker::runAll()
+#12 [internal function]: app\client\controller\Client->__construct()
+#13 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(359): ReflectionClass->newInstanceArgs(Array)
+#14 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\Loader.php(479): think\App::invokeClass('app\\client\\cont...')
+#15 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(581): think\Loader::controller('client', 'controller', false, 'Error')
+#16 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(457): think\App::module(Array, Array, NULL)
+#17 C:\Users\Administrator\Desktop\iosfilter\thinkphp\library\think\App.php(139): think\App::exec(Array, Array)
+#18 C:\Users\Administrator\Desktop\iosfilter\thinkphp\start.php(19): think\App::run()
+#19 C:\Users\Administrator\Desktop\iosfilter\client.php(27): require('C:\\Users\\Admini...')
+#20 {main}
+2019-08-30 10:05:22 pid:1 Worker process terminated
+2019-08-30 16:25:34 pid:1 Worker process terminated with ERROR: E_ERROR "Call to undefined method app\index\controller\AsyncTcp::connect() in C:\Users\Administrator\Desktop\iosfilter\application\index\controller\Crontab.php on line 119"

@@ -1,0 +1,52 @@
+{extend name="common/base" /}
+
+{block name="title"}任务{/block}
+{block name="css"}{/block}
+{block name="content"}
+<div class="layui-row layui-col-space20">
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                超级玩家总转入
+                <span class="layui-badge layui-bg-blue layuiadmin-badge">转入</span>
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <p class="layuiadmin-big-font" style="color: red" id="totalin">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                超级玩家总转出
+                <span class="layui-badge layui-bg-blue layuiadmin-badge">转出</span>
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <p class="layuiadmin-big-font" style="color: red" id="totalout">0</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{/block}
+{block name="script"}
+
+<script>
+    layui.config({
+        base: '__layui__/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+
+    }).use(['index', 'table', 'layer', 'element', 'laydate', 'form', 'jquery'], function() {
+        var element = layui.element
+            ,layer = layui.layer
+            ,laydate = layui.laydate
+            ,table = layui.table
+            ,$ = layui.$
+            ,form = layui.form;
+    });
+</script>
+{/block}

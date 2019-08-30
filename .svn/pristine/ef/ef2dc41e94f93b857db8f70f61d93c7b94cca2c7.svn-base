@@ -1,0 +1,94 @@
+﻿.of-login{
+  width: 100%;
+  min-width: 1300px;
+  min-height: 100vh;
+  background: url("../images/logindebg.png") no-repeat;
+  background-size: 100% 100%;
+}
+.of-login .login-main{
+  width: 1205px;
+  height: 665px;
+  background: url("../images/login-bg.png") no-repeat;
+  background-size: 100% 100%;
+  margin: 0 auto;
+  padding: 23px 29px 28px 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.login-main .right-msg{
+  width: auto;
+  height: 665px;
+  display: inline-block;
+}
+.of-login .login-box{
+  flex: 1;
+  padding: 90px 53px 80px 46px;
+  text-align: left;
+  position: relative;
+}
+.login-box .right-light{
+  position: absolute;
+  top:0;
+  right:50px;
+  z-index: 3;
+}
+.of-header{
+  font-size:36px;
+  font-weight:bold;
+  color:#3AE3E6;
+  margin-bottom: 80px;
+}
+.of-input{
+  width: 385px;
+  height: 57px;
+  border:1px solid #DCDCDC ;
+  border-radius:8px;
+  padding: 0 16px;
+  margin-bottom: 20px;
+}
+.of-input img{
+  width: 24px;
+  height: 24px;
+}
+.of-input input{
+  display: flex;
+  margin-left: 16px;
+  flex: 1;
+  height: 100%;
+  outline: none;
+  border: none;
+  font-size: 18px;
+}
+input::-webkit-input-placeholder,input:-moz-placeholder,input::-moz-placeholder, input:-ms-input-placeholder{
+  color:#DCDCDC
+}
+input::placeholder{
+  color:#DCDCDC
+}
+.of-forget{
+  display: flex;
+  justify-content:flex-end;
+  color:#3AE3E6;
+  font-size: 20px;
+  margin-bottom: 47px;
+}
+.of-pass-btn{
+  height: 57px;
+  line-height: 57px;
+  text-align: center;
+  font-size: 20px;
+  background: url("../images/login-btn.png") center no-repeat;
+  background-size: contain;
+  color:#FFFFFF;
+  margin: 0 auto 50px;
+}
+.of-without{
+  font-size: 20px;
+  text-align: center;
+  color:#999999;
+}
+.of-without a{
+  color:#3AE3E6;
+  text-decoration: none;
+}

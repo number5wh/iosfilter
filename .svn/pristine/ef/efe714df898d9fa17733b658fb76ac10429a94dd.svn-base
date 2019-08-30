@@ -1,0 +1,310 @@
+(function ($) {
+    //注册
+    $('#register input[name=username]').on('change',function () {
+      $(this).parent().next().html('');
+    });
+    $('#register input[name=password]').on('change',function () {
+      $(this).parent().next().html('');
+    });
+    $('#register input[name=captcha]').on('change',function () {
+      $(this).parent().next().html('');
+    });
+    /**
+     * 上传APP
+     */
+    $('#upload').on('click',function () {
+        var money = $(this).data('money');
+        if(money<=0){
+            $('#recharge-demo').show();
+        }else{
+            layer.open({
+                type:2,
+                title:'上传应用',
+                content:'/index/user/add',
+                id:'upload-view',
+                area:['640px','70%'],
+            });
+        }
+    });
+
+    $('.update-app').on('click',function () {
+        var id = $(this).data('id');
+        layer.open({
+            type:2,
+            title:'更新应用',
+            content:'/index/user/update?id='+id,
+            id:'upload-view',
+            area:['700px','70%'],
+        });
+    })
+
+    $('#recharge-demo-cancel').on('click',function () {
+        $('#recharge-demo').hide();;
+    });
+    /**
+     * 基本信息
+     */
+    $('#base_info').on('click', function () {
+        layer.open({
+            type: 2,
+            title: '基本信息',
+            content: '/index/user/base_info',
+            id: 'base-info',
+            area: ['640px', '400px'],
+            btn: ['关闭'],
+            yes: function () {
+                layer.closeAll();
+            }
+        });
+    })
+
+    //金额选择
+    $(".flex-justify-between .money").click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        $('#input_val').val($(this).data('money'));
+        $("#input_val").focus();
+    })
+
+})(jQuery);
+
+function register() {
+    var username =  $('#register input[name=username]').val(),
+       password =  $('#register input[name=password]').val(),
+        captcha =  $('#register input[name=captcha]').val(),
+      data = $('#register').serialize();
+    if(!username){
+        $('#register input[name=username]').parent().next().html('<code>请输入用户名</code>');
+        return;
+    }
+    if(!password){
+        $('#register input[name=password]').parent().next().html('<code>请输入密码</code>');
+        return;
+    }
+    if(!captcha){
+        $('#register input[name=captcha]').parent().next().html('<code>请输入验证码</code>');
+        return;
+    }
+    if(!$('#agree').hasClass('active')){
+        toastr.error('请勾选服务条款与隐私声明');
+        return;
+    }
+    $.ajax({
+        url:'/index/user/register',
+        data:data,
+        type:'POST',
+        success:function (res) {
+            if(res.code){
+                toastr.success(res.msg);
+                setTimeout(function () {
+                    window.location.href=res.url;
+                },2000);
+            }else {
+                toastr.error(res.msg);
+                $('#register input[name=__token__]').val(res.data.token);
+            }
+        }
+    });
+}
+
+function login() {
+    var account =  $('#login input[name=account]'),
+        password =  $('#login input[name=password]'),
+        data = $('#login').serialize();
+    if(!account.val()){
+        account.parent().css('border-color','red');
+        return;
+    }
+    if(!password.val()){
+        password.parent().css('border-color','red');
+        return;
+    }
+    $.ajax({
+        url:'/index/user/login',
+        data:data,
+        type:'POST',
+        success:function (res) {
+            if(res.code){
+                toastr.success(res.msg);
+                setTimeout(function () {
+                    window.location.href=res.url;
+                },2000);
+            }else {
+                toastr.error(res.msg);
+                $('#login input[name=__token__]').val(res.data.token);
+            }
+        }
+    });
+}
+
+
+//检查支付方式
+function check_pay_code(){
+    // 直接判断输入金额
+    var  input_pay = $('#input_pay').val();
+    if ( input_pay == ''){
+        layer.msg('请选择支付方式',{icon:2});
+        return false;
+    }else{
+        $('#input_pay').val(input_pay);
+    }
+
+}
+//选择支付方式
+function change_pay(obj)
+{
+    $(obj).addClass('active').siblings().removeClass('active');
+    var pay_code = $(obj).data('pay_code');
+    $('#input_pay').val(pay_code);
+}
+//选择支付方式
+function change_pay_f2f(obj)
+{
+    $(obj).addClass('active').siblings().removeClass('active');
+    var pay_code = $(obj).data('pay_code');
+    $('#input_pay').val(pay_code);
+    pay()
+}
+
+
+
+// document.getElementById('input_val').onkeyup = function () {
+    // changeNum(this);
+// }
+
+function changeNum(obj) {
+    //如果用户第一位输入的是小数点，则重置输入框内容
+    if (obj.value != '' && obj.value.substr(0, 1) == '.') {
+        obj.value = "";
+    }
+    obj.value = obj.value.replace(/^0*(0\.|[1-9])/, '$1');//粘贴不生效
+    obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+    obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+    obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+    if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+        if (obj.value.substr(0, 1) == '0' && obj.value.length == 2) {
+            obj.value = obj.value.substr(1, obj.value.length);
+        }
+    }
+    pay();
+
+}
+
+
+function pay() {
+    check_pay_code();
+    $.ajax({
+        url:'/index/Payf2f/recharge',
+        data:$("#recharge_form").serialize(),
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if(data.code == 0)
+            {
+                layer.msg(data.msg,{icon:2});
+                return false;
+            }else{
+                console.log(data)
+                $("#qrcode").html('').append(data.data.qrcode)
+                $(".weight-bold").hide();
+                var timer = setInterval(function(){ajax_qr_pay_status(timer,data.data.out_trade_no)},3000);
+            }
+
+        },
+        error: function (xhr, textStatus, error) {
+            //
+        }
+    });
+}
+
+
+var timesRun = 0;
+function ajax_qr_pay_status(timer,out_trade_no) {
+    timesRun += 1;
+    if(timesRun === 99){
+        clearInterval(timer);
+        layer.msg('订单超时',{icon:2},function () {
+            window.location.href = Url; //页面跳转
+        })
+    }
+
+    var Url = '/index/user/index';
+    if (out_trade_no != '') {
+        $.ajax({
+            url:'/index/Payf2f/ajax_get_pay_status',
+            data: {out_trade_no:out_trade_no},
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if(data.code == 1)
+                {
+                    clearInterval(timer);
+                    layer.msg('支付成功',{icon:1},function () {
+                        window.location.href = Url; //页面跳转
+                    })
+
+                }
+            }
+        });
+    }
+}
+
+
+
+function order() {
+    // 直接判断输入金额
+    var input_val = $('#inputVal').val();
+    if ( input_val == ''){
+        layer.msg('充值金额不能为空',{icon:2});
+        return false;
+    }
+
+    if(isNaN(input_val) || Number(input_val) <= 0){
+        layer.msg('请输入正确的充值金额',{icon:2});
+        return false;
+    }else{
+        $('#add_money').val(Number(input_val));
+    }
+    $.ajax({
+        url:'/index/order/pay',
+        data:$("#recharge_form").serialize(),
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if(data.code == 0)
+            {
+                layer.msg(data.msg,{icon:2});
+                return false;
+            }else{
+                window.location.href = data.data.url
+                //  $('body').append(data);
+                //  $("form").attr("target", "_blank");
+            }
+        },
+        error: function (xhr, textStatus, error) {
+            //
+        }
+    });
+}
+
+function checkMoney(obj) {
+    //如果用户第一位输入的是小数点，则重置输入框内容
+    if (obj.value != '' && obj.value.substr(0, 1) == '.') {
+        obj.value = "";
+    }
+    obj.value = obj.value.replace(/^0*(0\.|[1-9])/, '$1');//粘贴不生效
+    obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+    obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+    obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+    if (obj.value.indexOf(".") < 0 && obj.value != "") {
+        //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+        if (obj.value.substr(0, 1) == '0' && obj.value.length == 2) {
+            obj.value = obj.value.substr(1, obj.value.length);
+        }
+    }
+    if(obj.value >= 10000)
+    {
+        obj.value = '9999';
+    }
+}

@@ -1,0 +1,172 @@
+﻿*{
+  margin: 0;
+  padding: 0;
+}
+a{
+  text-decoration: none;
+  color: #5e5e5e;
+}
+html,body{
+  height: 100%;
+  width: 100%;
+  line-height: 1.5;
+  font-size: 14px;
+  overflow: auto;
+  font-family: Microsoft YaHei;
+}
+
+li{
+  list-style: none;
+}
+.content{
+  min-width: 960px;
+}
+
+.flex-justify-between,
+.flex-column-wrap,
+.flex-multi-row,
+.flex-center-wrap{
+  display: flex;
+}
+
+.flex-center-wrap{
+  align-items: center;
+}
+
+.flex-justify-between{
+  justify-content: space-between;
+}
+.flex-justify-around{
+  justify-content: space-around;
+}
+.flex-justify-center{
+  justify-content: center;
+}
+.flex-column-wrap{
+  flex-direction: column;
+  align-items: center;
+}
+.flex-multi-row{
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.flex{
+  flex: 1;
+}
+
+
+/*of-table*/
+.glo-table{
+}
+.glo-table table{
+  width: 100%;
+}
+.glo-table table th{
+  background-color: #f4f5f7;
+  height: 60px;
+  color: #999999;
+  font-weight: normal;
+}
+.glo-table .no-data{
+  width: 100%;
+  height: 190px;
+  background: #FFFFFF;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction:column;
+}
+.glo-table .no-data img{
+  width:117px ;
+  height: 90px;
+  /*padding-top: 50px;*/
+  margin: 0 auto;
+  text-align: center;
+}
+.glo-table .no-data p{
+  color:#666666
+}
+
+/*page*/
+.of-page{
+  padding: 32px 0;
+}
+.of-page .pager{
+  display: flex;
+  justify-content: flex-end;
+
+}
+.of-page .totle{
+  margin-right: 13px;
+
+}
+.of-page .totle span{
+  color: #3AE3E6;
+}
+.of-page .page-msg{
+  min-width: 25px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-right: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+.of-page .pro{
+  background-image: url("../images/index-page-pro.png");
+}
+.of-page .new{
+  background-image: url("../images/index-page-new.png");
+  color:#FFFFFF;
+}
+.of-page .next{
+  background-image: url("../images/index-page-next.png");
+}
+.of-page .size{
+  background-image: url("../images/index-page-size.png");
+  padding: 0 5px;
+  margin: 0 20px;
+}
+.of-page .jump{
+  background-image: url("../images/index-page-jump.png");
+  margin: 0 5px;
+}
+/*button*/
+.glo-btn{
+  color: #FFFFFF;
+  background:#3AE3E6;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+}
+/*background*/
+.of-bg-main{
+  width:100%;
+  padding: 14px 30px 10px 10px;
+  background:#FFFFFF;
+  border-radius:3px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+.mar-t15{
+  margin-bottom: 15px;
+}
+input::-webkit-input-placeholder,input:-moz-placeholder,input::-moz-placeholder, input:-ms-input-placeholder{
+  color:#DCDCDC
+}
+input::placeholder{
+  color:#DCDCDC
+}
+.help-block{
+  display: block;
+  margin-top: -15px;
+  text-align: left;
+  padding-bottom: 20px;
+  color: #CCCCCC;
+  text-indent: 2rem;
+}
+.help-block code{
+  color: red;
+}

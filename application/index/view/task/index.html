@@ -1,0 +1,158 @@
+{extend name="common/base" /}
+
+{block name="title"}任务{/block}
+{block name="css"}{/block}
+{block name="content"}
+<div class="layui-row layui-col-space20">
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                创建过滤任务
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <form class="layui-form" action="{:url('task/index')}" method="post" id="addProxy" >
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">任务名称：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="taskname" name='taskname' lay-verify="required" placeholder="请输入任务名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                   <div hidden id="savepath"></div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">号码清单：</label>
+                        <div class="layui-input-block" id="qd">
+                            <button type="button" class="layui-btn layui-btn-primary" id="test-upload-type2"><i class="layui-icon"></i>选择文件（最大10M）</button>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">价格：</label>
+                        <div class="layui-input-block">
+                            <div style="height: 38px;line-height: 38px"><span style="color: red">2</span>积分/号码</div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">温馨提示：</label>
+                        <div class="layui-input-block">
+                            <ul>
+                                <li style="color: #FF5722;">文件类型为.txt文档，号码需一行一个</li>
+                                <li style="color: #FF5722;">不要有空白字符、中文字符或特殊字符，以免浪费积分</li>
+                                <li style="color: #FF5722;">单个文件不要超过50w，大文件推荐分割多任务安排</li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <a style="margin-left: 15%" type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="addit" id="addit" >创建任务</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                上传文件格式要求
+
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <div>
+                    <ul>
+                        <li style="color: #FF5722;">文件类型为.txt文档，号码需一行一个</li>
+                        <li style="color: #FF5722;">不要有空白字符、中文字符或特殊字符，以免浪费积分</li>
+                        <li style="color: #FF5722;">单个文件不要超过50w，大文件推荐分割多任务安排</li>
+                        <li style="color: #FF5722;">上传的文件无法删除，文件需要缓存几分钟，请勿重复上传，否则扣除的积分由客户自负</li>
+                        <li style="color: #FF5722;">出现问题，请及时联系客服，切勿自己重复上传文件</li>
+                    </ul>
+                </div>
+                <div style="margin-top: 20px">
+                    <img src="__images__/qingdan.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{/block}
+{block name="script"}
+
+<script>
+    layui.config({
+        base: '__layui__/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+
+    }).use(['index', 'table', 'layer', 'element', 'laydate', 'form', 'jquery', 'upload'], function() {
+        var element = layui.element
+            ,layer = layui.layer
+            ,laydate = layui.laydate
+            ,table = layui.table
+            ,$ = layui.$
+            ,upload = layui.upload
+            ,form = layui.form;
+
+        upload.render({ //允许上传的文件后缀
+            elem: '#test-upload-type2'
+            ,url: '{:url("upload/mobile")}'
+            ,accept: 'file' //普通文件
+            ,exts: 'txt' //只允许上传压缩文件
+
+            ,done: function(res){
+                if (res.code==0) {
+                    $('#savepath').html(res.data.path);
+                    $('#qd').html('<div style="height: 38px;line-height: 38px">已上传文件：<span style="color: red">'+res.data.name+'</span></div>');
+                    layer.msg(res.msg,{icon:1});
+                } else {
+                    $('#savepath').html('');
+                    layer.msg(res.msg,{icon:2});
+                }
+            }
+        });
+
+        var main = {
+            submitForm : function(data) {
+                var taskname = $.trim(data.field.taskname)
+                    ,savepath = $('#savepath').html();
+                $.ajax({
+                    type:'post',
+                    url:data.form.action,
+                    data:{
+                        'taskname' : taskname,
+                        'savepath' : savepath
+                    },
+                    dataType:'json',
+                    success: function(res) {
+                        if (res.code === 0) {
+                            layer.msg(res.msg,{icon:1,time:1000}, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon:2});
+                        }
+                    }
+                });
+            },
+            bindEvent : function(){
+                form.on('submit(addit)', function(data) {
+                    main.submitForm(data);
+                    return false;
+                });
+            },
+            init : function(){
+                main.bindEvent();
+            }
+        };
+
+        main.init();
+
+    });
+</script>
+{/block}

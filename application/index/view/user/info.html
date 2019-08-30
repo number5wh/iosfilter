@@ -1,0 +1,157 @@
+{extend name="common/base" /}
+
+{block name="title"}任务过滤进度{/block}
+{block name="css"}{/block}
+{block name="content"}
+
+<div class="layui-col-md3">
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+            <div class="layadmin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%; height: auto;">
+
+                <ul class="layui-row layui-col-space10 layui-this">
+
+                    <li class="layui-col-xs6">
+                        <img src="__static__/images/touxiang.jpg" width="100" height="100" style="border-radius:50%;margin-left: 10px;">
+                    </li>
+                    <li class="layui-col-xs6" style="margin-bottom: 30px;">
+                        <a href="javascript:;" style="display: inline-block;margin-top: 30px;margin-left: -30px;">
+
+                            <h3 style="font-weight: 900">mt8899</h3>
+                            <h5>普通用户</h5>
+
+
+                        </a>
+                    </li>
+                    <HR align=center  color=#987cb9 SIZE=0.01 style="padding: 1px;">
+
+
+
+                    <li class="layui-col-xs6">
+                        <a href="javascript:;" >
+                            <h5>剩余积分：</h5>
+                            <h5>剩余检测积分：</h5>
+                            <h5>允许同时登陆：</h5>
+                            <h5>上次登陆：</h5>
+                        </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                        <a href="javascript:;" style="display: inline-block;margin-left: -40px;" >
+                            <h5 style="color: red;">mt8899</h5>
+                            <h5 style="color: red;">mt8899</h5>
+                            <h5>2个账号</h5>
+                            <h5>2018-10-9</h5>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-col-md8" style="margin-left: 30px;">
+    <div class="layui-card">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            <h3>修改密码</h3>
+        </div>
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            <form class="layui-form" lay-filter="component-form-group">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">当前密码：</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="roleid2"  name="roleid" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-block">
+                        <label class="layui-form-label">新密码:</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="roleid3"  name="roleid" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">确认密码:</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="roleid4" name="roleid"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <a class="layui-btn" id="search" data-type="reload">提交修改</a>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+{/block}
+{block name="script"}
+<script type="text/html" id="msg-bar">
+    {{#  if(d.ispay==0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="pay">支付订单</a>
+    {{#  } }}
+</script>
+<script>
+    layui.config({
+        base: '__layui__/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+
+    }).use(['index', 'table', 'layer', 'element', 'laydate', 'form', 'jquery'], function() {
+
+        $('#search').click(function () {
+            var pass2=$('#roleid2').val();
+            var pass3=$('#roleid3').val();
+            var pass4=$('#roleid4').val();
+
+            if(pass2==''|| pass3=='' || pass4==''){
+                layer.msg('密码不能为空', {icon:2,time:1000}  );
+                return;
+            }
+            if( pass3 != pass4){
+                layer.msg('两次输入密码不一致', {icon:2,time:1000}  );
+                return;
+            }
+            if( pass3.length<6){
+                layer.msg('密码长度必须大于6位', {icon:2,time:1000}  );
+                return;
+            }
+            $.ajax({
+                type:'post',
+                url: "{:url('changePass')}",
+                data:{
+                    pass2:pass2,
+                    pass3:pass3,
+                    pass4:pass4,
+
+                },
+                dataType:'json',
+                success: function(res) {
+                    if (res.status === 0) {
+                        layer.msg('密码修改成功，请登录！',{icon:1,time:1000}, function () {
+                            window.location.href="{:url('index/login/index')}";
+                        });
+                    } else if (res.status === 2) {
+                        layer.msg('旧密码输入不正确',{icon:2,time:1000});
+                    }else{
+                        layer.msg(res.msg,{icon:2,time:1000});
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+{/block}
